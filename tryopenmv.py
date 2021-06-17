@@ -8,6 +8,11 @@ sensor.skip_frames(10)#跳过n张照片，在更改设置后，跳过一些帧�
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
 
+tag = (38, 54, -48, -25, -37, 50)
+
 # 一直拍照
 while(True):
     img = sensor.snapshot()#拍摄一张照片，img为一个image对象
+    tag_blobs = img.find_blobs([tag],merge=True)
+    for blob in tag_blobs:
+        img.draw_rectangle(blob.rect(), color=(0,255,0))
