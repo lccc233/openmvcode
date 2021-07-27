@@ -12,9 +12,12 @@ uart = UART(3, 115200)
 tag = (34, 84, -37, 7, 25, 111)
 
 while(True):
+    uart.write('123')
     if uart.any():
-        order = uart.readline().decode()
-        print(order,type(order))
+        QRCode = uart.readline().decode()
+        print(QRCode)
+        if QRCode == 'red\r\n' :
+            print('yes')
     img = sensor.snapshot()
     tag_blobs = img.find_blobs([tag],merge=True)
     for blob in tag_blobs:
