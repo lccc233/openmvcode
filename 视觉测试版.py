@@ -11,7 +11,7 @@ aim_QRCode='R\r\n'
 x_mid=160
 y_mid=120
 center=-1
-
+QRresult=False
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)
@@ -61,14 +61,18 @@ while(True):
             typ=3
             img.draw_rectangle(blob.rect(),(255,0,0))
     for blob in white_blobs:
+        img.draw_rectangle(blob.rect(),(255,255,255))
         if(typ==-1 or abs(blob.cx()-x_mid)+abs(blob.cy()-y_mid)<center):
+            result=False
             if(uart3.any()):
                 QRCode = uart3.readline().decode()
-                if(QRCode==aim_QRCode):typ=1
-            x_p=blob.cx()
-            y_p=blob.cy()
-            center=abs(x_p-x_mid)+abs(y_p-y_mid)
-            img.draw_rectangle(blob.rect(),(255,255,255))
+                if(QRCode==aim_QRCode):
+                    typ=1
+                    QRresult=True
+            if QRresult :
+                x_p=blob.cx()
+                y_p=blob.cy()
+                center=abs(x_p-x_mid)+abs(y_p-y_mid)
     data=bytearray([0xee,0xee,0xee,int(typ),int(x_p),int(y_p)])
     uart1.write(data)
     print(data)
