@@ -65,11 +65,16 @@ while(True):
             img.binary([aim_threshold])
             img.dilate(2)
             img.draw_rectangle(blob.rect(),(0,255,255))#
-            statis=img.get_statistics(roi=(x_p-25,y_p-25,50,50))
+            detect_area=(int((blob.x()+blob.cx())/2),
+                         int((blob.y()+blob.cy())/2),
+                         int(blob.w()/2),int(blob.h()/2))
+            statis=img.get_statistics(roi=detect_area)
             if statis.l_mean()>50:
                 typ=1
             else:
                 typ=2
+            img.draw_rectangle(detect_area,(0,255,0))#
+            img.draw_cross(blob.cx(),blob.cy(),size=5, color=(0,255,0))#
     for blob in yelow_blobs:
         if(typ==-1 or abs(blob.cx()-x_mid)+abs(blob.cy()-y_mid)<center):
             x_p=blob.cx()
