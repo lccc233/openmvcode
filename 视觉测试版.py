@@ -1,5 +1,6 @@
 import sensor,time,image,math,pyb
 from pyb import UART
+from pyb import Timer
 
 aim_threshold=(1,100,1,31,-55,-5)
 yellow=()
@@ -22,7 +23,22 @@ ir_led=pyb.LED(4)
 red_led.on()
 green_led.on()
 blue_led.on()
-ir_led.on()
+
+tim = pyb.Timer(4)
+tim.init(freq=4000)
+p=pyb.Pin("P9",pyb.Pin.OUT_PP)
+counter_num=0
+aim_counter=1
+def tick(void):
+    global counter_num
+    counter_num=counter_num+1
+    if counter_num<=aim_counter:
+        p.high()
+    else:
+        p.low()
+    if counter_num==80:
+        counter_num=0
+tim.callback(tick)
 
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
@@ -38,7 +54,6 @@ uart3=UART(3,115200)
 red_led.off()
 green_led.off()
 blue_led.off()
-ir_led.off()
 
 while(True):
     typ=-1

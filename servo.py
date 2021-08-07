@@ -3,6 +3,7 @@ import sensor,pyb,time
 tim = pyb.Timer(4)
 tim.init(freq=4000)
 p = pyb.Pin("P0", pyb.Pin.OUT_PP)
+p.low()
 counter_num=0
 aim_counter=1
 def tick(void):
@@ -25,5 +26,5 @@ sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
 while True:
     sensor.snapshot()
-    time.sleep_ms(1000)
+    print(1)
 
