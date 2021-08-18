@@ -2,9 +2,11 @@ import sensor,time,image,math,pyb
 from pyb import UART
 from pyb import Timer
 
-aim_threshold=(1,100,1,31,-55,-5)
+aim_threshold=(22, 100, 2, 73, -14, 43)
+#blue (0,100,-128,127,-92,22)
+#red  (22, 100, 2, 73, -14, 43)
 yellow=()
-white=(62, 100, -10, 127, -10, 17)
+white=()
 typ=-1
 x_p=-1
 y_p=-1
@@ -25,18 +27,30 @@ green_led.on()
 blue_led.on()
 
 tim = pyb.Timer(4)
-tim.init(freq=4000)
-p=pyb.Pin("P9",pyb.Pin.OUT_PP)
+tim.init(freq=16000)
+pitch=pyb.Pin("P9",pyb.Pin.OUT_PP)
+grab=pyb.Pin("P8",pyb.Pin.OUT_PP)
+kick=pyb.Pin("P7",pyb.Pin.OUT_PP)
 counter_num=0
-aim_counter=2
+aim_counter_pitch=14 # 14 -> mid  36 -> finish
+aim_counter_grab=11  # 8 -> ball  10 -> wait
+aim_counter_kick=35
 def tick(void):
     global counter_num
     counter_num=counter_num+1
-    if counter_num<=aim_counter:
-        p.high()
+    if counter_num<=aim_counter_pitch:
+        pitch.high()
     else:
-        p.low()
-    if counter_num==80:
+        pitch.low()
+    if counter_num<=aim_counter_grab:
+        grab.high()
+    else:
+        grab.low()
+    if counter_num<=aim_counter_kick:
+        kick.high()
+    else:
+        kick.low()
+    if counter_num==160:
         counter_num=0
 tim.callback(tick)
 
@@ -44,8 +58,8 @@ sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(20)
-#sensor.set_auto_gain(False)
-#sensor.set_auto_whitebal(False)
+sensor.set_auto_gain(False)
+sensor.set_auto_whitebal(False)
 clock = time.clock()#
 
 uart1=UART(1,115200)
@@ -64,13 +78,13 @@ while(True):
     clock.tick()#
     img = sensor.snapshot()
     aim_blobs=img.find_blobs([aim_threshold],x_stride=2,y_stride=2,
-                             area_threshold=1000,pixel_threshold=100,
+                             area_threshold=6000,pixel_threshold=100,
                              merge=True,margin=2)
     yelow_blobs=img.find_blobs([yellow],x_stride=2,y_stride=2,
-                               area_threshold=1000,pixel_threshold=100,
+                               area_threshold=6000,pixel_threshold=100,
                                merge=True,margin=2)
     white_blobs=img.find_blobs([white],x_stride=2,y_stride=2,
-                               area_threshold=1000,pixel_threshold=100,
+                               area_threshold=6000,pixel_threshold=100,
                                merge=True,margin=2)
     for blob in aim_blobs:
         if(typ==-1 or abs(blob.cx()-x_mid)+abs(blob.cy()-y_mid)<center):
@@ -84,7 +98,7 @@ while(True):
                          int((blob.y()+blob.cy())/2),
                          int(blob.w()/2),int(blob.h()/2))
             statis=img.get_statistics(roi=detect_area)
-            if statis.l_mean()>50:
+            if statis.l_mean()>60:
                 typ=1
             else:
                 typ=2
