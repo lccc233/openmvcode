@@ -1,6 +1,5 @@
-import sensor,time,image,math,pyb
+import sensor,time,image,pyb
 from pyb import UART
-from pyb import Timer
 
 aim_threshold=(22, 100, 2, 73, -14, 43)
 #blue (0,100,-128,127,-92,22)
@@ -26,41 +25,13 @@ red_led.on()
 green_led.on()
 blue_led.on()
 
-tim = pyb.Timer(4)
-tim.init(freq=16000)
-pitch=pyb.Pin("P9",pyb.Pin.OUT_PP)
-grab=pyb.Pin("P8",pyb.Pin.OUT_PP)
-kick=pyb.Pin("P7",pyb.Pin.OUT_PP)
-counter_num=0
-aim_counter_pitch=14 # 14 -> mid  36 -> finish
-aim_counter_grab=11  # 8 -> ball  10 -> wait
-aim_counter_kick=35
-def tick(void):
-    global counter_num
-    counter_num=counter_num+1
-    if counter_num<=aim_counter_pitch:
-        pitch.high()
-    else:
-        pitch.low()
-    if counter_num<=aim_counter_grab:
-        grab.high()
-    else:
-        grab.low()
-    if counter_num<=aim_counter_kick:
-        kick.high()
-    else:
-        kick.low()
-    if counter_num==160:
-        counter_num=0
-tim.callback(tick)
-
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(20)
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
-clock = time.clock()#
+clock = time.clock()
 
 uart1=UART(1,115200)
 uart3=UART(3,115200)
