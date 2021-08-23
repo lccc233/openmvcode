@@ -1,5 +1,5 @@
 import sensor,time,image,pyb
-from pyb import UART
+from pyb import UART,Pin,Timer
 
 aim_threshold=(22, 100, 2, 73, -14, 43)
 #blue (0,100,-128,127,-92,22)
@@ -17,14 +17,6 @@ center=-1
 QRresult=False
 white_visible=False
 
-red_led=pyb.LED(1)
-green_led=pyb.LED(2)
-blue_led=pyb.LED(3)
-ir_led=pyb.LED(4)
-red_led.on()
-green_led.on()
-blue_led.on()
-
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)
@@ -36,9 +28,35 @@ clock = time.clock()
 uart1=UART(1,115200)
 uart3=UART(3,115200)
 
-red_led.off()
-green_led.off()
-blue_led.off()
+tim4 = Timer(4, freq=50) # Frequency in Hz
+tim2 = Timer(2, freq=50) # Frequency in Hz
+
+ch41 = tim4.channel(1, Timer.PWM, pin=Pin("P7"), pulse_width_percent=0)
+ch42 = tim4.channel(2, Timer.PWM, pin=Pin("P8"), pulse_width_percent=0)
+
+ch21 = tim2.channel(1, Timer.PWM, pin=Pin("P6"), pulse_width_percent=0)
+
+def init_1():
+    #复位
+def init_2():
+    #复位
+def init_3():
+    #复位
+
+def mode_1():
+    #抬头
+    #收拨片
+    #放头
+    #夹取
+    #翻转
+    #松开爪子
+    #抬拨片
+def mode_2():
+    #拨
+def mode_3();
+    #抓
+    #等待
+    #放
 
 while(True):
     typ=-1
@@ -71,8 +89,10 @@ while(True):
             statis=img.get_statistics(roi=detect_area)
             if statis.l_mean()>60:
                 typ=1
+                mode_2()
             else:
                 typ=2
+                mode_3()
             img.draw_rectangle(detect_area,(0,255,0))#
             img.draw_cross(blob.cx(),blob.cy(),size=5, color=(0,255,0))#
     for blob in yelow_blobs:
@@ -122,3 +142,4 @@ while(True):
         uart1.write(data)
         print(data)
     print("FPS %f"%clock.fps())#
+
