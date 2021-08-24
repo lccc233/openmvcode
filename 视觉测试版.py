@@ -9,6 +9,7 @@ white=()
 typ=-1
 x_p=-1
 y_p=-1
+mode=-1
 aim_QRCode='R\r\n'
 aim_QRcode_self='R'
 x_mid=160
@@ -38,8 +39,10 @@ ch21 = tim2.channel(1, Timer.PWM, pin=Pin("P6"), pulse_width_percent=0)
 
 def init_1():
     #复位
+
 def init_2():
     #复位
+
 def init_3():
     #复位
 
@@ -59,7 +62,15 @@ def mode_3();
     #放
 
 while(True):
-    typ=-1
+    if(uart1.any()):
+        mode_read=uarrt1.readline().decode().strip()
+        mode=int(mode_read)
+    if(mode==1):
+        init_1()
+    if(mode==2):
+        init_2()
+    if(mode==3):
+        init_3()
     x_p=-1
     y_p=-1
     center=-1
