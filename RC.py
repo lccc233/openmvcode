@@ -18,6 +18,8 @@ class RC:
     x_mid=160
     y_mid=120
     center=-1
+    aim_QRcode='R'
+    QRok=False
     def __init__(self):
         print('Game Begain!')
     def init(self):
@@ -79,14 +81,19 @@ class RC:
                                merge=True,margin=2)
          for blob in white_blobs:
             if(self.center==-1 or abs(blob.cx()-self.x_mid)+abs(blob.cy()-self.y_mid)<self.center):
-                dis=blob.cx()-self.x_mid
-                self.x_p=blob.cx()
-                self.y_p=blob.cy()
-                self.center=abs(blob.cx()-self.x_mid)+abs(blob.cy()-self.y_mid)
-                if(abs(dis)<10):
-                    self.get_blob()
-                else:
-                    print('移动')
+                if(self.QRok==False):
+                    for code in img.find_qrcodes():
+                        if(code[4]==self.aim_QRCode):
+                            self.QRok=True
+                if(self.QRok==True):
+                    dis=blob.cx()-self.x_mid
+                    self.x_p=blob.cx()
+                    self.y_p=blob.cy()
+                    self.center=abs(blob.cx()-self.x_mid)+abs(blob.cy()-self.y_mid)
+                    if(abs(dis)<10):
+                        self.get_blob()
+                    else:
+                        print('移动')
     def send_message(self):
         print('发给电控')
 rc = RC()
