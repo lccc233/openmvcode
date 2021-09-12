@@ -28,10 +28,13 @@ class RC:
         self.center=-1
     def get_blob(self):
         print('blob')
+        self.init()
     def get_ball(self):
         print('ball')
+        self.init()
     def get_ring(self):
         print('ring')
+        self.init()
     def find_aim(self):
         aim_blobs=img.find_blobs([self.aim_threshold],x_stride=2,y_stride=2,
                              area_threshold=6000,pixel_threshold=100,
@@ -44,13 +47,13 @@ class RC:
                 self.center=abs(blob.cx()-self.x_mid)+abs(blob.cy()-self.y_mid)
                 img.binary([self.aim_threshold])
                 img.dilate(2)
-                img.draw_rectangle(blob.rect(),(0,255,255))
+                img.draw_rectangle(blob.rect(),(0,255,255))#
                 detect_area=(int((blob.x()+blob.cx())/2),
                              int((blob.y()+blob.cy())/2),
                              int(blob.w()/2),int(blob.h()/2))
                 statis=img.get_statistics(roi=detect_area)
-                img.draw_rectangle(detect_area,(0,255,0))
-                img.draw_cross(blob.cx(),blob.cy(),size=5, color=(0,255,0))
+                img.draw_rectangle(detect_area,(0,255,0))#
+                img.draw_cross(blob.cx(),blob.cy(),size=5, color=(0,255,0))#
                 if statis.l_mean()>60:
                     if(abs(dis)<10):
                         self.get_blob()
