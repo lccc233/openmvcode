@@ -1,4 +1,5 @@
 import sensor
+from pyb import UART
 
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
@@ -6,6 +7,9 @@ sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(20)
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
+
+uart = UART(1, 115200)
+mode=0
 
 class RC:
     aim_threshold = (22, 100, 2, 73, -14, 43)
@@ -99,7 +103,15 @@ class RC:
                         print('移动')
     def send_message(self):
         print('发给电控')
+        data=bytearray([mode,0x0f,0xad])
+        uart.write(data)
 rc = RC()
 while True:
+    if uart.any():
+        mode_read=uart.readline()
+        print(mode_read[0])
+        mode=mode_read[0]
     img = sensor.snapshot()
-    rc.find_aim()
+    if mode==1:
+
+    rc.send_message()
